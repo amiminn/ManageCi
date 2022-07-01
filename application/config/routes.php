@@ -52,6 +52,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $route['default_controller'] = 'MainController';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
-$route['barang'] = 'Maincontroller/barang';
-$route['suplier'] = 'Maincontroller/suplier';
-$route['pembelian'] = 'Maincontroller/pembelian';
+$route['barang'] = 'MainController/barang';
+$route['suplier'] = 'MainController/suplier';
+$route['pembelian/(:any)'] = 'MainController/pembelian/$1';
+
+// api barang 
+$route['api/barang']['GET']  = 'api/BarangController';
+$route['api/barang/stock']['GET']  = 'api/BarangController/stock';
+$route['api/barang']['POST']  = 'api/BarangController/store';
+$route['api/barang/(:any)/del'] = 'api/BarangController/delete/$1';
+
+// api suplier 
+$route['api/suplier']['GET']  = 'api/SuplierController';
+$route['api/suplier']['POST']  = 'api/SuplierController/store';
+$route['api/suplier/(:num)/del']  = 'api/SuplierController/delete/$1';
+
+// api transaksi 
+$route['api/pembelian']['GET']  = 'api/PembelianController';
+$route['api/pembelian']['POST']  = 'api/PembelianController/store';
+$route['api/pembelianGetBrg/(:any)']['GET'] = 'api/PembelianController/getBarang/$1';
+
+// api hutang 
+$route['api/hutang']['GET']  = 'api/HutangController';
+$route['api/reset/all']['GET']  = 'api/HutangController/destroy';

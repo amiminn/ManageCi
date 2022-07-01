@@ -19,7 +19,6 @@
         <a class="active" href="<?php echo base_url(); ?>"><i class="fas fa-home"></i> Dashboard</a>
         <a href="<?php echo base_url(); ?>barang"><i class="fas fa-box"></i> Barang</a>
         <a href="<?php echo base_url(); ?>suplier"><i class="fas fa-truck"></i> Suplier</a>
-        <a href="<?php echo base_url(); ?>pembelian"><i class="fas fa-store"></i> Pembelian</a>
     </div>
 
     <div class="content">
@@ -28,7 +27,6 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="#">Library</a></li>
                     </ol>
                 </nav>
             </div>
@@ -38,15 +36,15 @@
             <div class="col-sm-4 mb-2">
                 <div class="card">
                     <div class="card-body">
-                        <h1 class="d-inline">20</h1>
-                        <p class="d-inline">Barang</p>
+                        <h1 class="d-inline" id="brg"></h1>
+                        <p class="d-inline">Jenis Barang</p>
                     </div>
                 </div>
             </div>
             <div class="col-sm-4 mb-2">
                 <div class="card">
                     <div class="card-body">
-                        <h1 class="d-inline">20</h1>
+                        <h1 class="d-inline" id="spl"></h1>
                         <p class="d-inline">Suplier</p>
                     </div>
                 </div>
@@ -54,30 +52,132 @@
             <div class="col-sm-4 mb-2">
                 <div class="card">
                     <div class="card-body">
-                        <h1 class="d-inline">20</h1>
-                        <p class="d-inline">Transaksi</p>
+                        <h1 class="d-inline" id="transaksi"></h1>
+                        <p class="d-inline">Total Transaksi</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <h2>Responsive Sidebar Example</h2>
-                <p>
-                    This example use media queries to transform the sidebar to a top
-                    navigation bar when the screen size is 700px or less.
-                </p>
-                <p>
-                    We have also added a media query for screens that are 400px or less,
-                    which will vertically stack and center the navigation links.
-                </p>
-                <h3>Resize the browser window to see the effect.</h3>
+        <div class="card mb-2">
+            <div class="card-header">
+                Stok Barang
+            </div>
+            <div>
+                <table class="table align-middle mb-0 bg-white mb-2">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>No.</th>
+                            <th>Kode Barang</th>
+                            <th>Jumlah Stok Barang</th>
+                        </tr>
+                    </thead>
+                    <tbody class="stock">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-2">
+            <div class="card-header">
+                <p class="d-inline">Detail Transaksi</p>
+                <button class="btn btn-info btn-sm float-end viewD">lihat detail</button>
+            </div>
+            <div>
+                <table class="table align-middle mb-0 bg-white mb-2 tb-d" hidden>
+                    <thead class="bg-light">
+                        <tr>
+                            <th>No. Transaksi</th>
+                            <th>Kode Barang</th>
+                            <th>Harga Beli</th>
+                            <th>Jumlah</th>
+                            <th>Diskon</th>
+                            <th>Potongan Harga</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="detail">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card mb-2">
+            <div class="card-header">
+                <p class="d-inline">Detail Hutang</p>
+                <button class="btn btn-info btn-sm float-end viewH">lihat detail</button>
+            </div>
+            <div>
+                <table class="table align-middle mb-0 bg-white mb-2 tb-h" hidden>
+                    <thead class="bg-light">
+                        <tr>
+                            <th>No. Transaksi</th>
+                            <th>Kode Suplier</th>
+                            <th>Tanggal Beli</th>
+                            <th>Jumlah Hutang</th>
+                        </tr>
+                    </thead>
+                    <tbody class="hutang">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
     <!-- MDB -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            function getData() {
+                $.get('http://localhost/ciku/api/barang/stock', (res) => {
+                    let isi = '';
+                    let no = 1
+                    let data = res.data
+                    data.map((d) => {
+                        isi += ` <tr><td>${no}</td><td>${d.KODEBRG}</td><td>${d.QTYBELI}</td></tr>`
+                        $('.stock').html(isi)
+                        no++
+                    })
+
+                })
+            }
+            getData()
+            getAll()
+
+            function getAll() {
+                $.get('http://localhost/ciku/api/barang', (res) => {
+                    $('#brg').html(res.data.length)
+                })
+                $.get('http://localhost/ciku/api/suplier', (res) => {
+                    $('#spl').html(res.data.length)
+                })
+                $.get('http://localhost/ciku/api/pembelian', (res) => {
+                    $('#transaksi').html(res.header.length)
+                    let isi = ''
+                    let data = res.detail
+                    data.map((d) => {
+                        isi += `<tr><td>${d.NOTRANSAKSI}</td><td>${d.KODEBRG}</td><td>${d.HARGABELI}</td><td>${d.QTY}</td><td>${d.DISKON}</td><td>${d.DISKONRP}</td><td>${d.TOTALRP}</td></tr>`;
+                        $('.detail').html(isi)
+                    })
+                })
+                $.get('http://localhost/ciku/api/hutang', (res) => {
+                    let isi = ''
+                    let data = res.data
+                    data.map((d) => {
+                        isi += `<tr><td>${d.NOTRANSAKSI}</td><td>${d.KODESPL}</td><td>${d.TGLBELI}</td><td>${d.TOTALHUTANG}</td></tr>`;
+                        $('.hutang').html(isi)
+                    })
+                })
+            }
+
+            $('.viewD').click(() => {
+                $('.tb-d').removeAttr('hidden')
+            })
+            $('.viewH').click(() => {
+                $('.tb-h').removeAttr('hidden')
+            })
+        })
+    </script>
 </body>
 
 </html>
